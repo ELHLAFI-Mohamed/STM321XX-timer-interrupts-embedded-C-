@@ -1,38 +1,44 @@
 #include "stm32f1xx.h"
 #include "GPIO_drive.h"
+#include "timer_drive.h"
 
+//###########################################
+/*
+void TIM1_UP_IRQHandler(){}
+void TIM2_IRQHandler(){}
+void TIM3_IRQHandler(){}
+void TIM4_IRQHandler(){}
+*/
 
 
 
 int main(void){
 
 
-GPIO_init(port_A,0,Input_mode,Input_PP);
-GPIO_init(port_C,13,Output_50Mhz,Output_GP_PP);
-GPIO_init(port_A,12,Output_50Mhz,Output_GP_PP);
-__disable_irq();
+	timer_irq_millis_start(T1,500);
+GPIO_init(port_A,8,Output_50Mhz,Output_GP_PP);
+GPIO_init(port_A,9,Output_50Mhz,Output_GP_PP);
 
-    SysTick->CTRL=0;
-	SysTick->LOAD=7200000-1;
-	SysTick->VAL=0;
-	SysTick->CTRL=7;
-
-__enable_irq();
 
  while(1){
 
-	 GPIO_write(port_A,12,GPIO_read(port_A,0));
+
+
+	 GPIO_toggle(port_A,8);
+	 TDelay_Milli(500);
+	// timer_stop(T1);
 
  }
 
 
 }
 
-void SysTick_Handler(void){
 
-	GPIO_toggle(port_C,13);
+void TIM1_UP_IRQHandler(){
+	timer_irq_Rflag(T1);
+	 GPIO_toggle(port_A,9);
+
 }
-
 
 
 
